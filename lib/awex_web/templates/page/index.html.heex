@@ -1,0 +1,15 @@
+<section class="row">
+  <article class="column">
+
+<%= for {t, s} <- @sections do %>
+  <h2><%= t %></h2>
+  <p><%= s.description %></p>
+  <ul>
+  <%= for {n, l} <- s.libs do %>
+    <li><a href={l.url}><%= l.title %></a> - <%= l.description %>.<br>
+      <%= l.stars %> <%= l.latest_commit %></li>
+  <% end %>
+  </ul>
+<% end %>
+  </article>
+</section>
