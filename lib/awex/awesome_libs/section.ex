@@ -5,9 +5,9 @@ defmodule Awex.AwesomeLibs.Section do
   schema "sections" do
     field :title, :string
 
-    has_many :lib, Awex.AwesomeLibs.Lib
+    has_many :libs, Awex.AwesomeLibs.Lib
 
-    timestamps()
+    # timestamps()
   end
 
   @doc false

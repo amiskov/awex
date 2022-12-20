@@ -6,7 +6,7 @@ defmodule Awex.AwesomeLibs do
   import Ecto.Query, warn: false
   alias Awex.Repo
 
-  alias Awex.AwesomeLibs.Lib
+  alias Awex.AwesomeLibs.{Section, Lib}
 
   @doc """
   Returns the list of libs.
@@ -19,6 +19,10 @@ defmodule Awex.AwesomeLibs do
   """
   def list_libs do
     Repo.all(Lib)
+  end
+
+  def list_sections do
+    Repo.all(Section)
   end
 
   @doc """

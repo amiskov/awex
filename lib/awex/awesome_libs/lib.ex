@@ -8,10 +8,11 @@ defmodule Awex.AwesomeLibs.Lib do
     field :stars, :integer
     field :last_commit_datetime, :utc_datetime
     field :description, :string
+    field :section_id, :integer
 
-    belongs_to :sections, Awex.AwesomeLibs.Section #, foreign_key: :section_id, references: :id, define_field: false
+    belongs_to :sections, Awex.AwesomeLibs.Section , foreign_key: :section_id, references: :id, define_field: false
 
-    timestamps()
+    # timestamps()
   end
 
   @doc false

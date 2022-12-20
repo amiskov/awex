@@ -5,7 +5,9 @@ defmodule Awex.Repo.Migrations.CreateSections do
     create table(:sections) do
       add :title, :string
 
-      timestamps()
+      # timestamps()
     end
+
+    create unique_index(:sections, [:title])
   end
 end

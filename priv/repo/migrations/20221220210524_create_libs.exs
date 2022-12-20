@@ -10,7 +10,7 @@ defmodule Awex.Repo.Migrations.CreateLibs do
       add :last_commit_datetime, :utc_datetime
       add :section_id, references(:sections)
 
-      timestamps()
+      # timestamps()
     end
 
     create unique_index(:libs, [:title])

@@ -1,9 +1,11 @@
 defmodule AwexWeb.PageController do
   use AwexWeb, :controller
 
-  alias Awex.AA
+  alias Awex.AwesomeLibs
 
   def index(conn, _params) do
-    render(conn, "index.html", sections: AA.value())
+    libs = AwesomeLibs.list_libs()
+    sections = AwesomeLibs.list_sections() |> Awex.Repo.preload(:libs)
+    render(conn, "index.html", sections: sections, libs: libs)
   end
 end
