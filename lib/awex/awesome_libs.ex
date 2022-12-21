@@ -8,6 +8,25 @@ defmodule Awex.AwesomeLibs do
 
   alias Awex.AwesomeLibs.{Section, Lib}
 
+  @doc "Returns a list of `owner/repo` strings, used in GitHub GraphQL query."
+  def get_gh_section_repos(section_id) do
+    Section
+    |> Repo.get(section_id)
+    |> Repo.preload(:libs)
+    |> Map.get(:libs)
+    |> Enum.filter(fn l ->
+      String.starts_with?(l.url, "https://github.com/")
+    end)
+    |> Enum.map(fn l ->
+      %URI{path: path} = URI.parse(l.url)
+      "repo:" <> String.trim_leading(path, "/")
+    end)
+  end
+
+  def update_section_repos(%{repos_info: repos_info}) do
+    # changeset = Lib.changeset()
+  end
+
   @doc """
   Returns the list of libs.
 

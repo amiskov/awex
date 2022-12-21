@@ -4,8 +4,11 @@
       <h2><%= s.title %></h2>
       <p><%= #s.description %></p>
       <%= for l <- s.libs do %>
-        <li><a href={l.url}><%= l.title %></a> - <%= l.description %>.<br>
-        <%= l.stars %> <%= #l.latest_commit %></li>
+        <li>
+          <a href={l.url}><%= l.title %></a>
+          <%= l.description %>
+          <%= l.stars %>
+          <%= l.last_commit_datetime %></li>
       <% end %>
     <% end %>
   </article>

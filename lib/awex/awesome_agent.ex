@@ -27,26 +27,11 @@ defmodule Awex.AA do
     new_libs =
       section
       |> Map.get(:libs)
-      |> Enum.map(&update_lib/1)
+      |> Enum.map(&Awex.GitHub.update_lib/1)
 
     %{section | libs: new_libs}
   end
 
-  defp update_lib(lib) do
-    if String.starts_with?(lib.url, "https://github.com/") do
-      %URI{path: path} = URI.parse(lib.url)
-      [owner, repo] = String.split(path, "/", trim: true) |> Enum.take(2)
-
-      case Awex.GitHub.get_stars_and_latest_commit!(owner, repo) do
-        {:ok, %{stars: s, latest_commit: d}} ->
-          lib
-          |> Map.put(:stars, s)
-          |> Map.put(:latest_commit, d)
-      end
-    else
-      lib
-    end
-  end
 
   # Supervisor.start_link([{Awex.Worker, nil}], strategy: :one_for_one)
 end

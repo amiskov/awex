@@ -13,6 +13,6 @@ defmodule Awex.Repo.Migrations.CreateLibs do
       # timestamps()
     end
 
-    create unique_index(:libs, [:title])
+    create unique_index(:libs, [:title, :section_id])
   end
 end
