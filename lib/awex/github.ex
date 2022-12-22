@@ -8,7 +8,7 @@ defmodule Awex.GitHub do
     Accept: "Application/json; Charset=utf-8"
   ]
 
-  @stars_query ~S"""
+  @repo_query ~S"""
   query GetRepoInfo($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name){
       stargazers {totalCount}
@@ -36,6 +36,10 @@ defmodule Awex.GitHub do
       nodes {
         ... on Repository {
           name
+          url
+          owner {
+            login
+          }
           stargazers {
             totalCount
           }
@@ -66,7 +70,7 @@ defmodule Awex.GitHub do
     |> Jason.encode!()
   end
 
-  def perform_section_query(payload) do
+  def perform_gq_query(payload) do
     case HTTPoison.post(@graphql_url, payload, @graphql_query_headers) do
       {:ok, resp} ->
         result =
@@ -75,27 +79,37 @@ defmodule Awex.GitHub do
           |> Map.get("data")
           |> Map.get("search")
 
-        repos_count = Map.get(result, "repositoryCount")
+        # repos_count = Map.get(result, "repositoryCount")
 
-        repos_info =
-          Map.get(result, "nodes")
-          |> Enum.map(fn repo ->
-            stars = Map.get(repo, "stargazers") |> Map.get("totalCount")
+        Map.get(result, "nodes")
+        |> Enum.map(fn repo ->
+          stars = Map.get(repo, "stargazers") |> Map.get("totalCount")
+          url = Map.get(repo, "url") |> String.downcase()
+          repo_name = Map.get(repo, "name")
+          owner = Map.get(repo, "owner") |> Map.get("login")
 
-            [%{"node" => %{"committedDate" => latest_commit}}] =
-              repo
-              |> Map.get("defaultBranchRef")
-              |> Map.get("target")
-              |> Map.get("history")
-              |> Map.get("edges")
+          [%{"node" => %{"committedDate" => latest_commit}}] =
+            repo
+            |> Map.get("defaultBranchRef")
+            |> Map.get("target")
+            |> Map.get("history")
+            |> Map.get("edges")
 
-            %{stars: stars, latest_commit: latest_commit}
-          end)
-
-        {:ok, %{repos_count: repos_count, repos_info: repos_info}}
+          {
+            url,
+            %{
+              stars: stars,
+              latest_commit: latest_commit,
+              owner: owner,
+              repo_name: repo_name,
+              url: url
+            }
+          }
+        end)
+        |> Map.new()
 
       {:error, _resp} ->
-        {:error, nil}
+        %{}
     end
   end
 
@@ -104,28 +118,14 @@ defmodule Awex.GitHub do
     HTTPoison.get!(@awesome_list_url).body
   end
 
-  def update_lib(lib) do
-    if String.starts_with?(lib.url, "https://github.com/") do
-      %URI{path: path} = URI.parse(lib.url)
-      [owner, repo] = String.split(path, "/", trim: true) |> Enum.take(2)
+  def get_lib_info(gh_url) do
+    %URI{path: path} = URI.parse(gh_url)
+    [owner, repo] = String.split(path, "/", trim: true) |> Enum.take(2)
 
-      case Awex.GitHub.get_stars_and_latest_commit!(owner, repo) do
-        {:ok, %{stars: s, latest_commit: d}} ->
-          # Do the Repo.update
-          lib
-          |> Map.put(:stars, s)
-          |> Map.put(:latest_commit, d)
-      end
-    else
-      lib
-    end
-  end
-
-  def get_stars_and_latest_commit!(owner, repo) do
     payload =
       %{
         variables: %{owner: owner, name: repo},
-        query: @stars_query
+        query: @repo_query
       }
       |> Jason.encode!()
 
@@ -137,16 +137,27 @@ defmodule Awex.GitHub do
           |> Map.get("data")
           |> Map.get("repository")
 
-        stars = Map.get(repo, "stargazers") |> Map.get("totalCount")
+        if repo do
+          stars = Map.get(repo, "stargazers") |> Map.get("totalCount")
 
-        [%{"node" => %{"committedDate" => latest_commit}}] =
-          repo
-          |> Map.get("defaultBranchRef")
-          |> Map.get("target")
-          |> Map.get("history")
-          |> Map.get("edges")
+          [%{"node" => %{"committedDate" => latest_commit}}] =
+            repo
+            |> Map.get("defaultBranchRef")
+            |> Map.get("target")
+            |> Map.get("history")
+            |> Map.get("edges")
 
-        {:ok, %{stars: stars, latest_commit: latest_commit}}
+          {:ok, dt, _} = DateTime.from_iso8601(latest_commit)
+
+          {:ok,
+           %{
+             stars: stars,
+             last_commit_datetime: dt
+           }}
+        else
+          # TODO: handle different errors differently
+          {:error, "repo not found"}
+        end
 
       {:error, _resp} ->
         {:error, nil}

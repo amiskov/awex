@@ -3,13 +3,35 @@
     <%= for s <- @sections do %>
       <h2><%= s.title %></h2>
       <p><%= #s.description %></p>
+      <table>
       <%= for l <- s.libs do %>
-        <li>
+        <tr class={if l.unreachable, do: "unreachable"}>
+          <td>
           <a href={l.url}><%= l.title %></a>
-          <%= l.description %>
-          <%= l.stars %>
-          <%= l.last_commit_datetime %></li>
+          </td>
+          <td width="100%">
+            <%= l.description %>
+          </td>
+          <%= if String.starts_with?(l.url, "https://github.com/") do %>
+            <%= if not(l.unreachable) do %>
+              <td style="white-space: nowrap;">
+                  ⭐️ <%= l.stars %>
+              </td>
+              <td style="white-space: nowrap;">
+                <%= if l.last_commit_datetime do %>
+                  <% %{day: d, year: y, month: m} = l.last_commit_datetime %>
+                 🗓 <%= y %>-<%= m %>-<%= d %>
+                <% end %>
+              </td>
+            <%= else %>
+              <td colspan="2"> ⛔️ Abandoned on GitHub</td>
+            <%= end %>
+          <%= else %>
+            <td colspan="2">🤷🏻‍♂️ No GitHub link found</td>
+          <% end %>
+        </tr>
       <% end %>
+    </table>
     <% end %>
   </article>
 </section>

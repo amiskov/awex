@@ -1,5 +1,4 @@
 defmodule Awex.HtmlParser do
-  alias Awex.{AwesomeSection, AwesomeLib}
   alias Awex.AwesomeLibs.{Section, Lib}
 
   @moduledoc """

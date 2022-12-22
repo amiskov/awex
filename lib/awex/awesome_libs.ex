@@ -15,7 +15,9 @@ defmodule Awex.AwesomeLibs do
     |> Repo.preload(:libs)
     |> Map.get(:libs)
     |> Enum.filter(fn l ->
-      String.starts_with?(l.url, "https://github.com/")
+      l.url
+      |> String.downcase
+      |> String.starts_with?("https://github.com/")
     end)
     |> Enum.map(fn l ->
       %URI{path: path} = URI.parse(l.url)
@@ -23,8 +25,35 @@ defmodule Awex.AwesomeLibs do
     end)
   end
 
-  def update_section_repos(%{repos_info: repos_info}) do
-    # changeset = Lib.changeset()
+  def get_gh_repo(query) do
+    
+  end
+
+  def update_section_repos(repos_info) do
+    urls = repos_info |> Map.keys() |> Enum.map(&String.downcase/1)
+    get_stars = fn url -> Map.get(repos_info, url) |> Map.get(:stars) end
+
+    get_latest_commit_date = fn url ->
+      datetime = Map.get(repos_info, url) |> Map.get(:latest_commit)
+      {:ok, dt, _} = DateTime.from_iso8601(datetime)
+      dt
+    end
+
+    query =
+      from l in Lib,
+      where: fragment("lower(?)", l.url) in ^urls
+
+    libs = Repo.all(query) |> IO.inspect(label: "LIBS")
+
+    # TODO: optimize this
+    utc_datetime = DateTime.utc_now() |> DateTime.truncate(:second)
+    for l <- libs do
+      Ecto.Changeset.change(l,
+        stars: get_stars.(String.downcase(l.url)),
+        last_commit_datetime: get_latest_commit_date.(String.downcase(l.url)),
+        updated_at: utc_datetime
+      )
+    end
   end
 
   @doc """
@@ -40,8 +69,34 @@ defmodule Awex.AwesomeLibs do
     Repo.all(Lib)
   end
 
+  def get_gh_libs_for_update(limit) do
+    hour_ago = DateTime.utc_now() |> DateTime.add(-1, :hour)
+    query =
+      from l in Lib,
+        where: like(l.url, "https://github.com/%"),
+        where: is_nil(l.updated_at), # or l.updated_at <= ^hour_ago,
+        where: not(l.unreachable),
+        # order_by: [asc_nulls_first: :updated_at, asc: :title],
+        limit: ^limit
+    Repo.all(query)
+  end
+
+  def get_repo_urls_for_update(limit) do
+    # hour_ago = DateTime.utc_now() |> DateTime.add(-1, :hour)
+    query =
+      from l in Lib,
+        where: like(l.url, "https://github.com/%"),
+        where: is_nil(l.updated_at), # l.updated_at <= ^hour_ago or 
+        # order_by: [asc_nulls_first: :updated_at, asc: :title],
+        limit: ^limit,
+        select: l.url
+    Repo.all(query)
+  end
+
   def list_sections do
-    Repo.all(Section)
+    Section
+    |> order_by(desc: :title)
+    |> Repo.all()
   end
 
   @doc """
