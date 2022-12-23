@@ -2,20 +2,20 @@
   <article class="column">
     <%= for s <- @sections do %>
       <h2><%= s.title %></h2>
-      <p><%= #s.description %></p>
+      <p><%= s.description %></p>
       <table>
       <%= for l <- s.libs do %>
         <tr class={if l.unreachable, do: "unreachable"}>
-          <td>
-          <a href={l.url}><%= l.title %></a>
-          </td>
+          <td><a href={l.url}><%= l.title %></a></td>
           <td width="100%">
             <%= l.description %>
           </td>
           <%= if String.starts_with?(l.url, "https://github.com/") do %>
             <%= if not(l.unreachable) do %>
               <td style="white-space: nowrap;">
+                <%= if l.stars do %>
                   ⭐️ <%= l.stars %>
+                <% end %>
               </td>
               <td style="white-space: nowrap;">
                 <%= if l.last_commit_datetime do %>

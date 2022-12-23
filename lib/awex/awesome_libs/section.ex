@@ -4,16 +4,15 @@ defmodule Awex.AwesomeLibs.Section do
 
   schema "sections" do
     field :title, :string
+    field :description, :string
 
-    has_many :libs, Awex.AwesomeLibs.Lib
-
-    # timestamps()
+    has_many :libs, Awex.AwesomeLibs.Lib, preload_order: [asc: :title]
   end
 
   @doc false
   def changeset(section, attrs) do
     section
-    |> cast(attrs, [:title])
-    |> validate_required([:title])
+    |> cast(attrs, [:title, :description])
+    |> validate_required([:title, :description])
   end
 end

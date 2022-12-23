@@ -8,7 +8,6 @@ defmodule Awex.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      Awex.AA,
       # Start the Ecto repository
       Awex.Repo,
       # Start the Telemetry supervisor
@@ -16,9 +15,10 @@ defmodule Awex.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Awex.PubSub},
       # Start the Endpoint (http/https)
-      AwexWeb.Endpoint
-      # Start a worker by calling: Awex.Worker.start_link(arg)
-      # {Awex.Worker, arg}
+      AwexWeb.Endpoint,
+      # Schedule Quantum tasks
+      Awex.Scheduler,
+      {Task.Supervisor, name: Awex.TaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

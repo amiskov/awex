@@ -44,6 +44,22 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :awex, GITHUB_USER_TOKEN: System.get_env("GITHUB_USER_TOKEN")
+config :awex, GITHUB_GRAPHQL_URL: "https://api.github.com/graphql"
+config :awex, AWESOME_LIST_URL: "https://github.com/h4cc/awesome-elixir/blob/master/README.md"
+
+# config :awex, Awex.Scheduler,
+#   jobs: [
+#     update_at_midnight: [
+#       schedule: "@daily",
+#       task: {Awex.Workers.FetchAndStore, :run, []},
+#     ],
+#     update_on_start: [
+#       schedule: "@reboot",
+#       task: {Awex.Workers.FetchAndStore, :run, []},
+#     ]
+#   ]
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
