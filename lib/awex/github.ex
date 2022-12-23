@@ -50,7 +50,6 @@ defmodule Awex.GitHub do
         resp =
           resp.body
           |> Jason.decode!()
-          |> IO.inspect(label: "decoded")
 
         case resp do
           %{"errors" => errs} ->
@@ -86,11 +85,14 @@ defmodule Awex.GitHub do
                  last_commit_datetime: dt
                }}
             else
-              # TODO: handle different errors differently
               Logger.error("repo not found")
               {:error, "repo not found"}
             end
         end
+
+      {:error, %HTTPoison.Error{reason: reason, id: id}} ->
+        Logger.error("HTTPoison error: id is #{id}; reason is `#{reason}`")
+        {:error, reason}
     end
   end
 end

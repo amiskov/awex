@@ -1,5 +1,9 @@
 <section class="row">
   <article class="column">
+    <%= if @min_stars > 0 do %>
+      <h1>Repos with at least ⭐️<%= @min_stars %></h1>
+      <hr>
+    <% end %>
     <%= for s <- @sections do %>
       <h2><%= s.title %></h2>
       <p><%= s.description %></p>

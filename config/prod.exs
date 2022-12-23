@@ -14,6 +14,19 @@ config :awex, AwexWeb.Endpoint, cache_static_manifest: "priv/static/cache_manife
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :awex, Awex.Scheduler,
+  jobs: [
+    update_at_midnight: [
+      schedule: "@daily",
+      task: {Awex.Workers.FetchAndStore, :run, []},
+    ],
+    update_on_start: [
+      schedule: "@reboot",
+      task: {Awex.Workers.FetchAndStore, :run, []},
+    ]
+  ]
+
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

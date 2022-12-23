@@ -10,14 +10,10 @@ defmodule Awex.AwesomeLibs do
 
   alias Awex.AwesomeLibs.{Section, Lib}
 
-  def list_libs do
-    Repo.all(Lib)
-  end
-
   @doc """
   Clean the `sections` and `libs` tables restarting the `id` sequence.
   """
-  def truncate_sections_with_libs() do
+  def truncate_sections_and_libs_tables() do
     Repo.query("TRUNCATE TABLE sections CASCADE;")
 
     Repo.query("ALTER SEQUENCE sections_id_seq RESTART WITH 1")
@@ -34,7 +30,6 @@ defmodule Awex.AwesomeLibs do
       case %Section{}
            |> Section.changeset(s)
            |> Repo.insert() do
-
         {:ok, %{id: section_id}} ->
           libs =
             s.libs
@@ -87,6 +82,17 @@ defmodule Awex.AwesomeLibs do
 
   def list_sections do
     Section
+    |> preload(:libs)
     |> Repo.all()
+  end
+
+  def list_sections(min_stars) do
+    q =
+      from s in Section,
+        join: l in assoc(s, :libs),
+        where: l.stars >= ^min_stars,
+        preload: [libs: l]
+
+    Repo.all(q)
   end
 end

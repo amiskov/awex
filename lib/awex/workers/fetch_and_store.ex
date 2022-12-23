@@ -7,7 +7,8 @@ defmodule Awex.Workers.FetchAndStore do
 
   @awesome_list_url Application.compile_env(:awex, :AWESOME_LIST_URL)
   @query_limit 99
-  @timeout 1 # seconds
+  # seconds
+  @timeout 1
 
   def run do
     html =
@@ -33,7 +34,7 @@ defmodule Awex.Workers.FetchAndStore do
   end
 
   defp refresh_db_data(sections_and_libs) do
-    AwesomeLibs.truncate_sections_with_libs()
+    AwesomeLibs.truncate_sections_and_libs_tables()
     AwesomeLibs.add_sections(sections_and_libs)
   end
 
@@ -44,9 +45,7 @@ defmodule Awex.Workers.FetchAndStore do
   def update_libs_with_stars_and_last_commit_date([_ | _] = gh_libs) do
     gh_libs
     |> Enum.map(fn lib ->
-      Task.Supervisor.async_nolink(Awex.TaskSupervisor, fn ->
-        update_lib(lib)
-      end)
+      Task.Supervisor.async_nolink(Awex.TaskSupervisor, fn -> update_lib(lib) end)
     end)
     |> Enum.map(&Task.await/1)
     |> (fn res ->
