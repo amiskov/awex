@@ -1,6 +1,6 @@
 # Awex
 
-Awesome Elixir List with some perks and everyday update on stars and the latest commit. It looks like this:
+Awesome Elixir List with everyday update on stars and the latest commit. It looks like this:
 
 ![Awex screenshot](./awex.png)
 
