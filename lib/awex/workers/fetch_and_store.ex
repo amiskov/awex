@@ -1,11 +1,10 @@
 defmodule Awex.Workers.FetchAndStore do
   require Logger
 
-  alias Awex.{GitHub, Parser, List}
+  alias Awex.{GitHub, Parser, AwesomeList}
 
   @awesome_list_url Application.compile_env(:awex, :AWESOME_LIST_URL)
   @query_limit 99
-  # seconds
   @timeout 1
 
   def run do
@@ -30,8 +29,8 @@ defmodule Awex.Workers.FetchAndStore do
   end
 
   defp refresh_db_data(sections_and_libs) do
-    List.truncate_sections_and_libs_tables()
-    List.add_sections(sections_and_libs)
+    AwesomeList.truncate_sections_and_libs_tables()
+    AwesomeList.add_sections(sections_and_libs)
   end
 
   # For each lib send a GraphQL query to get stars and latest commit date.
@@ -62,18 +61,18 @@ defmodule Awex.Workers.FetchAndStore do
 
   def update_libs_with_stars_and_last_commit_date(),
     do:
-      List.get_gh_libs_for_update(@query_limit)
+      AwesomeList.get_gh_libs_for_update(@query_limit)
       |> update_libs_with_stars_and_last_commit_date
 
   defp update_lib(lib) do
     case Awex.GitHub.get_lib_info(lib.url) do
       {:ok, gh_info} ->
-        List.update_lib_with_gh_info(lib, gh_info)
+        AwesomeList.update_lib_with_gh_info(lib, gh_info)
 
       {:error, err} ->
         case err do
           [%{"type" => "NOT_FOUND"} | _] ->
-            List.mark_gh_lib_unreachable(lib)
+            AwesomeList.mark_gh_lib_unreachable(lib)
             Logger.warning("Failed in `update_lib_with_gh_info`: #{lib.title} is unreachable.")
             :not_found
 

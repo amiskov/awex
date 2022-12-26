@@ -7,7 +7,6 @@ defmodule Awex.GitHub do
     Authorization: "Bearer #{@gh_user_token}",
     Accept: "Application/json; Charset=utf-8"
   ]
-
   @repo_query ~S"""
   query GetRepoInfo($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name){

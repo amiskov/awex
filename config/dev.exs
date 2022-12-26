@@ -2,10 +2,11 @@ import Config
 
 # Configure your database
 config :awex, Awex.Repo,
-  username: "andreymiskov",
-  password: "",
-  hostname: "localhost",
-  database: "awex",
+  username: System.get_env("PGUSER"),
+  password: System.get_env("PGPASSWORD"),
+  hostname: System.get_env("PGHOST"),
+  port: System.get_env("PGPORT"),
+  database: System.get_env("PGDATABASE"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -19,7 +20,7 @@ config :awex, Awex.Repo,
 config :awex, AwexWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
@@ -28,6 +29,18 @@ config :awex, AwexWeb.Endpoint,
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
   ]
+
+# config :awex, Awex.Scheduler,
+#   jobs: [
+#     update_at_midnight: [
+#       schedule: "@daily",
+#       task: {Awex.Workers.FetchAndStore, :run, []}
+#     ],
+#     update_on_start: [
+#       schedule: "@reboot",
+#       task: {Awex.Workers.FetchAndStore, :run, []}
+#     ]
+#   ]
 
 # ## SSL Support
 #
@@ -65,7 +78,7 @@ config :awex, AwexWeb.Endpoint,
   ]
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, 
+config :logger, :console,
   format: "[$level] $message\n",
   level: :debug
 

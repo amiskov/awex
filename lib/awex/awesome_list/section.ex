@@ -1,4 +1,4 @@
-defmodule Awex.List.Section do
+defmodule Awex.AwesomeList.Section do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +6,7 @@ defmodule Awex.List.Section do
     field :title, :string
     field :description, :string
 
-    has_many :libs, Awex.List.Lib, preload_order: [asc: :title]
+    has_many :libs, Awex.AwesomeList.Lib, preload_order: [asc: :title]
   end
 
   @doc false

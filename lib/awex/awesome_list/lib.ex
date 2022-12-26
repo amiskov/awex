@@ -1,4 +1,4 @@
-defmodule Awex.List.Lib do
+defmodule Awex.AwesomeList.Lib do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -12,7 +12,7 @@ defmodule Awex.List.Lib do
     field :updated_at, :utc_datetime
     field :unreachable, :boolean
 
-    belongs_to :sections, Awex.List.Section,
+    belongs_to :sections, Awex.AwesomeList.Section,
       foreign_key: :section_id,
       references: :id,
       define_field: false

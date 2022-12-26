@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  awex:
+    build: .
+    container_name: awex 
+    command: /app/entry_point.sh
+    volumes:
+      - .:/app
+    ports:
+      - 4000:4000
+    environment:
+      PGUSER: ${PGUSER}
+      GITHUB_USER_TOKEN: ${GITHUB_USER_TOKEN}
+      PGPASSWORD: ${PGPASSWORD}
+      PGDATABASE: ${PGDATABASE}
+      PGHOST: ${PGHOST}
+      PGPORT: ${PGPORT}
+    depends_on:
+      - awex_db
+
+  awex_db:
+    image: postgres
+    container_name: awex_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: always
+    volumes:
+      - ./docker-volumes/postgres-data:/var/lib/postgresql/data

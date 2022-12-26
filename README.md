@@ -1,5 +1,9 @@
 # Awex
 
+## Docker Compose
+
+Create an `.env` file based on `.env.example`. Those ENV variables are used by `docker compose`.
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`

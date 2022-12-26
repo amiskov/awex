@@ -1,4 +1,4 @@
-defmodule Awex.List do
+defmodule Awex.AwesomeList do
   @moduledoc """
   The List context.
   """
@@ -6,9 +6,9 @@ defmodule Awex.List do
   require Logger
 
   import Ecto.Query, warn: false
-  alias Awex.Repo
 
-  alias Awex.List.{Section, Lib}
+  alias Awex.Repo
+  alias Awex.AwesomeList.{Section, Lib}
 
   @doc """
   Clean the `sections` and `libs` tables restarting the `id` sequence.
