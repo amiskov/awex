@@ -1,10 +1,11 @@
 # Awex
 
-## Docker Compose
+## Build for Production
+Create an `.env` file based on `.env.example`. 
 
-Create an `.env` file based on `.env.example`. Those ENV variables are used by `docker compose`.
+Run `docker compose up -d --build`.
 
-Generate a secret key with `mix phx.gen.secret` and add it to the `.env` file under `SECRET_KEY_BASE` field.
+## Setup for Development
 
 To start your Phoenix server:
 
