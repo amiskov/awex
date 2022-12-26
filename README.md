@@ -1,5 +1,9 @@
 # Awex
 
+Awesome Elixir List with some perks and everyday update on stars and the latest commit. It looks like this:
+
+![Awex screenshot](./awex.png)
+
 ## Build for Production
 Create an `.env` file based on `.env.example`. 
 
@@ -16,6 +20,9 @@ To start your Phoenix server:
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+
+## TODO
+- [ ] Only GitHub links are checked for stars and the last commit date. We can also get some stats from GitLab as well.
 
 ## Further Improvement Ideas
 We can use GraphQL API to make a batch query to update up to 100 libs at a time. It looks like this:
@@ -57,3 +64,4 @@ query GetSectionReposInfo($repos: String!) {
 ```
 
  But looks like it doesn't support redirects for repos with changed owner/name. Single query does support redirects and that's because we use it now. Probably, we could update what we can with batch query and then fill in the gaps with single queries for libs with changed owner/name.
+
