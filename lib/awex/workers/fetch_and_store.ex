@@ -8,17 +8,19 @@ defmodule Awex.Workers.FetchAndStore do
   @timeout 1
 
   def run do
+    Logger.info("Fetching HTML from #{@awesome_list_url}...")
+
     html =
       Task.async(fn -> GitHub.get_html!(@awesome_list_url) end)
       |> Task.await()
 
-    sections_and_libs =
-      Task.async(fn -> parse(html) end)
-      |> Task.await()
+    Logger.info("Got HTML, parsing it...")
+    sections_and_libs = parse(html)
 
-    Task.async(fn -> refresh_db_data(sections_and_libs) end)
-    |> Task.await()
+    Logger.info("Refreshing the DB with a new list of repos...")
+    refresh_db_data(sections_and_libs)
 
+    Logger.info("Updating the DB with stars and latest commit dates...")
     update_libs_with_stars_and_last_commit_date()
   end
 

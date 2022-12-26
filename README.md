@@ -4,6 +4,8 @@
 
 Create an `.env` file based on `.env.example`. Those ENV variables are used by `docker compose`.
 
+Generate a secret key with `mix phx.gen.secret` and add it to the `.env` file under `SECRET_KEY_BASE` field.
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`

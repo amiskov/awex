@@ -8,14 +8,11 @@ services:
     volumes:
       - .:/app
     ports:
-      - 4000:4000
+      - 4001:${PORT}
+    env_file:
+      - .env
     environment:
-      PGUSER: ${PGUSER}
-      GITHUB_USER_TOKEN: ${GITHUB_USER_TOKEN}
-      PGPASSWORD: ${PGPASSWORD}
-      PGDATABASE: ${PGDATABASE}
-      PGHOST: ${PGHOST}
-      PGPORT: ${PGPORT}
+      DATABASE_URL: "postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}"
     depends_on:
       - awex_db
 
@@ -23,8 +20,8 @@ services:
     image: postgres
     container_name: awex_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
     restart: always
     volumes:
       - ./docker-volumes/postgres-data:/var/lib/postgresql/data
