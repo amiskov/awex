@@ -1,4 +1,4 @@
-defmodule Awex.AwesomeLibs.Lib do
+defmodule Awex.List.Lib do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -12,7 +12,10 @@ defmodule Awex.AwesomeLibs.Lib do
     field :updated_at, :utc_datetime
     field :unreachable, :boolean
 
-    belongs_to :sections, Awex.AwesomeLibs.Section , foreign_key: :section_id, references: :id, define_field: false
+    belongs_to :sections, Awex.List.Section,
+      foreign_key: :section_id,
+      references: :id,
+      define_field: false
 
     # timestamps()
   end
@@ -20,7 +23,15 @@ defmodule Awex.AwesomeLibs.Lib do
   @doc false
   def changeset(lib, attrs) do
     lib
-    |> cast(attrs, [:title, :description, :url, :stars, :last_commit_datetime, :updated_at, :unreachable])
+    |> cast(attrs, [
+      :title,
+      :description,
+      :url,
+      :stars,
+      :last_commit_datetime,
+      :updated_at,
+      :unreachable
+    ])
     |> unique_constraint(:title, message: "Lib title already exists")
     |> validate_required([:title, :url, :description])
   end

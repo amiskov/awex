@@ -1,4 +1,4 @@
-defmodule Awex.HtmlParser do
+defmodule Awex.Parser do
   def parse_html(raw_html) do
     {:ok, document} = Floki.parse_document(raw_html)
     Floki.find(document, "article.markdown-body")

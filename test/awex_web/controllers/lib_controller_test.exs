@@ -1,7 +1,7 @@
 defmodule AwexWeb.LibControllerTest do
   use AwexWeb.ConnCase
 
-  import Awex.AwesomeLibsFixtures
+  import Awex.ListFixtures
 
   @create_attrs %{}
   @update_attrs %{}

@@ -1,7 +1,7 @@
-defmodule Awex.AwesomeLibsFixtures do
+defmodule Awex.ListFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Awex.AwesomeLibs` context.
+  entities via the `Awex.List` context.
   """
 
   @doc """
@@ -13,7 +13,7 @@ defmodule Awex.AwesomeLibsFixtures do
       |> Enum.into(%{
 
       })
-      |> Awex.AwesomeLibs.create_lib()
+      |> Awex.List.create_lib()
 
     lib
   end

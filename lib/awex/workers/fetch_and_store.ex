@@ -1,9 +1,7 @@
 defmodule Awex.Workers.FetchAndStore do
   require Logger
 
-  alias Awex.GitHub
-  alias Awex.HtmlParser
-  alias Awex.AwesomeLibs
+  alias Awex.{GitHub, Parser, List}
 
   @awesome_list_url Application.compile_env(:awex, :AWESOME_LIST_URL)
   @query_limit 99
@@ -12,7 +10,7 @@ defmodule Awex.Workers.FetchAndStore do
 
   def run do
     html =
-      Task.async(&fetch/0)
+      Task.async(fn -> GitHub.get_html!(@awesome_list_url) end)
       |> Task.await()
 
     sections_and_libs =
@@ -25,17 +23,15 @@ defmodule Awex.Workers.FetchAndStore do
     update_libs_with_stars_and_last_commit_date()
   end
 
-  defp fetch(), do: GitHub.get_html!(@awesome_list_url)
-
   defp parse(html) do
     html
-    |> HtmlParser.parse_html()
-    |> HtmlParser.get_sections_with_libs()
+    |> Parser.parse_html()
+    |> Parser.get_sections_with_libs()
   end
 
   defp refresh_db_data(sections_and_libs) do
-    AwesomeLibs.truncate_sections_and_libs_tables()
-    AwesomeLibs.add_sections(sections_and_libs)
+    List.truncate_sections_and_libs_tables()
+    List.add_sections(sections_and_libs)
   end
 
   # For each lib send a GraphQL query to get stars and latest commit date.
@@ -66,18 +62,18 @@ defmodule Awex.Workers.FetchAndStore do
 
   def update_libs_with_stars_and_last_commit_date(),
     do:
-      AwesomeLibs.get_gh_libs_for_update(@query_limit)
+      List.get_gh_libs_for_update(@query_limit)
       |> update_libs_with_stars_and_last_commit_date
 
   defp update_lib(lib) do
-    case Awex.GitHub.get_lib_info(lib.url) |> IO.inspect(label: "!lib_info") do
+    case Awex.GitHub.get_lib_info(lib.url) do
       {:ok, gh_info} ->
-        AwesomeLibs.update_lib_with_gh_info(lib, gh_info)
+        List.update_lib_with_gh_info(lib, gh_info)
 
       {:error, err} ->
         case err do
           [%{"type" => "NOT_FOUND"} | _] ->
-            AwesomeLibs.mark_gh_lib_unreachable(lib)
+            List.mark_gh_lib_unreachable(lib)
             Logger.warning("Failed in `update_lib_with_gh_info`: #{lib.title} is unreachable.")
             :not_found
 
