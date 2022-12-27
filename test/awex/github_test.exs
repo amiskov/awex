@@ -1,5 +1,5 @@
 defmodule Awex.GithubTest do
-  use Awex.DataCase
+  use Awex.DataCase, async: true
 
   alias Awex.AwesomeList
   alias Awex.Workers.FetchAndStore

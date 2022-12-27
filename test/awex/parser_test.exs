@@ -1,5 +1,5 @@
 defmodule Awex.ParserTest do
-  use Awex.DataCase
+  use Awex.DataCase, async: true
   alias Awex.ParserFixtures
 
   setup_all do
