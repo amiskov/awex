@@ -11,6 +11,7 @@ defmodule Awex.AwesomeList.Lib do
     field :section_id, :integer
     field :updated_at, :utc_datetime
     field :unreachable, :boolean
+    field :days_from_last_commit, :integer
 
     belongs_to :sections, Awex.AwesomeList.Section,
       foreign_key: :section_id,
@@ -29,6 +30,7 @@ defmodule Awex.AwesomeList.Lib do
       :url,
       :stars,
       :last_commit_datetime,
+      :days_from_last_commit,
       :updated_at,
       :unreachable
     ])

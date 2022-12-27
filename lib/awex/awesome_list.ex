@@ -47,7 +47,12 @@ defmodule Awex.AwesomeList do
 
   def update_lib_with_gh_info(lib, gh_info) do
     now = DateTime.utc_now() |> DateTime.truncate(:second)
-    attrs = Map.put(gh_info, :updated_at, now)
+    diff = Date.diff(now, gh_info.last_commit_datetime)
+
+    attrs =
+      gh_info
+      |> Map.put(:updated_at, now)
+      |> Map.put(:days_from_last_commit, diff)
 
     lib
     |> Lib.changeset(attrs)
@@ -68,12 +73,10 @@ defmodule Awex.AwesomeList do
   end
 
   def get_gh_libs_for_update(limit) do
-    hour_ago = DateTime.utc_now() |> DateTime.add(-1, :hour)
-
     query =
       from l in Lib,
         where: like(l.url, "https://github.com/%"),
-        where: is_nil(l.updated_at) or l.updated_at <= ^hour_ago,
+        where: is_nil(l.updated_at) or l.updated_at <= ago(1, "hour"),
         where: not l.unreachable,
         limit: ^limit
 

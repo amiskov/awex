@@ -22,10 +22,17 @@
                 <% end %>
               </td>
               <td style="white-space: nowrap;">
+                <small>
                 <%= if l.last_commit_datetime do %>
-                  <% %{day: d, year: y, month: m} = l.last_commit_datetime %>
-                 🗓 <%= y %>-<%= m %>-<%= d %>
+                 <% %{day: d, year: y, month: m} = l.last_commit_datetime %>
+                 🗓 <%= y %>-<%= m %>-<%= d %><br>
+                 <%= case l.days_from_last_commit == 0 do
+                  0 -> "updated today"
+                  1 -> "1 day ago"
+                  _ -> to_string(l.days_from_last_commit) <> " days ago"
+                  end %>
                 <% end %>
+               </small>
               </td>
             <% else %>
               <td colspan="2"> ⛔️ Abandoned on GitHub</td>
