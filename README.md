@@ -9,6 +9,13 @@ Create an `.env` file based on `.env.example`.
 
 Run `docker compose up -d --build`.
 
+## Run Tests
+There are a couple of integration tests, you'll need to pass `GITHUB_USER_TOKEN` environment variable with a classic GitHub user token and also configure the test DB in `config/test.exs`:
+
+```sh
+GITHUB_USER_TOKEN=... mix test
+```
+
 ## Setup for Development
 
 To start your Phoenix server:

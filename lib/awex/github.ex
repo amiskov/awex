@@ -29,7 +29,6 @@ defmodule Awex.GitHub do
   """
 
   def get_html!(url) do
-    # File.read!(Path.join(File.cwd!(), "temp.html"))
     HTTPoison.get!(url).body
   end
 
