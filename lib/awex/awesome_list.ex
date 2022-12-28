@@ -95,8 +95,10 @@ defmodule Awex.AwesomeList do
     q =
       from s in Section,
         join: l in assoc(s, :libs),
+        preload: [libs: l],
         where: l.stars >= ^min_stars,
-        preload: [libs: l]
+        order_by: s.title,
+        order_by: l.title
 
     Repo.all(q)
   end
