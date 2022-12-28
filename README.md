@@ -16,17 +16,10 @@ There are a couple of integration tests, you'll need to pass `GITHUB_USER_TOKEN`
 GITHUB_USER_TOKEN=... mix test
 ```
 
+Check `test` task and predefined ENV variables in `Makefile.example`.
+
 ## Setup for Development
-
-To start your Phoenix server:
-
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+Having PostgreSQL up and running you can use `run` task from `Makefile.example`.
 
 ## TODO
 - [ ] Only GitHub links are checked for stars and the last commit date. We can also get some stats from GitLab as well.

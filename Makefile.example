@@ -1,0 +1,24 @@
+.EXPORT_ALL_VARIABLES:
+
+GITHUB_USER_TOKEN=<create at https://github.com/settings/tokens>
+PGUSER=postgres
+PGPASSWORD=postgres
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=awex
+
+run:
+	iex -S mix phx.server
+
+.PHONY: test
+test:
+	mix test
+
+migrate:
+	mix ecto.migrate
+
+du:
+	docker compose up --build
+
+dlog:
+	docker-compose logs awex
